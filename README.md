@@ -91,3 +91,4 @@ bin/pulsar-client consume "persistent://public/default/stocks" -s stonks-reader
 * https://github.com/tspannhw/FLiP-SQL/
 * https://docs.altinity.com/altinitycloud/quickstartguide/yourfirstqueries/
 * https://clickhouse.com/docs/en/sql-reference/functions/date-time-functions/
+* https://clickhouse.com/docs/en/sql-reference/functions/type-conversion-functions/
