@@ -55,16 +55,21 @@ configs:
 ```
 bin/pulsar-admin schemas delete stocks
 bin/pulsar-admin schemas delete persistent://public/default/stocks
+
 bin/pulsar-admin topics list public/default
 bin/pulsar-admin topics create persistent://public/default/stocks
-bin/pulsar-admin schemas get stocks
-bin/pulsar-admin sinks create --archive ./connectors/pulsar-io-jdbc-clickhouse-2.8.0.nar --inputs stocks --name stocks-postgres-jdbc-sink --sink-config-file conf/pgsql.yml --parallelism 1
-bin/pulsar-admin sinks list --tenant public --namespace default
-bin/pulsar-admin sinks get --tenant public --namespace default --name stocks-postgres-jdbc-sink 
-bin/pulsar-admin sinks status --tenant public --namespace default --name stocks-postgres-jdbc-sink 
+
 bin/pulsar-admin topics info-internal persistent://public/default/stocks
 bin/pulsar-admin topics stats-internal persistent://public/default/stocks
-bin/pulsar-admin schemas get persistent://public/default/stocks
+
+bin/pulsar-admin sinks stop --tenant public --namespace default --name jdbc-clickhouse-sink
+bin/pulsar-admin sinks delete --tenant public --namespace default --name jdbc-clickhouse-sink
+bin/pulsar-admin sinks restart --tenant public --namespace default --name jdbc-clickhouse-sink
+
+bin/pulsar-admin sinks create --archive ./connectors/pulsar-io-jdbc-clickhouse-2.8.0.nar --inputs stocks --name jdbc-clickhouse-sink --sink-config-file conf/clickhouse.yml --parallelism 1
+bin/pulsar-admin sinks list --tenant public --namespace default
+bin/pulsar-admin sinks get --tenant public --namespace default --name jdbc-clickhouse-sink
+bin/pulsar-admin sinks status --tenant public --namespace default --name jdbc-clickhouse-sink
 
 bin/pulsar-client consume "persistent://public/default/stocks" -s stonks-reader
 
