@@ -83,7 +83,17 @@ bin/pulsar-admin sinks status --tenant public --namespace default --name jdbc-cl
 bin/pulsar-client consume "persistent://public/default/stocks" -s stonks-reader
 
 ```
+## Example Python3 Script
 
+```
+pip3 install clickhouse-driver
+
+from clickhouse_driver import Client
+client = Client('streamnative.osacon2021.altinity.cloud', user='admin', password='supersecret1', port=9440, secure='y', verify=False)
+
+client.execute("INSERT INTO stocks VALUES('IBM', '6bec81c6', 1634912880810, 1611327960000, '2021/01/22 10:06:00', '340.83099','341.38000','341.38000','2198','340.83099')")
+
+```
 
 ## References
 
