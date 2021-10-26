@@ -16,12 +16,15 @@ OSACON 2021 - Hello Hydrate! From Stream to Clickhouse with Apache Pulsar and Fr
 
 
 ```
-CREATE TABLE IF NOT EXISTS stocks ON CLUSTER '{cluster}'
+drop table stocks ON CLUSTER '{cluster}';
+drop table stocks_local ON CLUSTER '{cluster}';
+
+CREATE TABLE IF NOT EXISTS stocks_local ON CLUSTER '{cluster}'
 (
     symbol String, 
     uuid String,
-    ts Date,
-    dt	 String,
+    ts Int32,
+    dt Int32,
    datetime String,
    open String, 
    close String,
@@ -29,9 +32,15 @@ CREATE TABLE IF NOT EXISTS stocks ON CLUSTER '{cluster}'
    volume String,
    low String
 ) ENGINE = ReplicatedMergeTree('/clickhouse/{cluster}/tables/{shard}/{database}/{table}', '{replica}')
-    PARTITION BY toYYYYMM(ts)
+    PARTITION BY toYYYYMM(parseDateTimeBestEffort(datetime))
     ORDER BY (symbol);
+    
+CREATE TABLE stocks ON CLUSTER '{cluster}' AS stocks_local
+ENGINE = Distributed('{cluster}', default, stocks_local, rand());
 
+INSERT INTO stocks VALUES('IBM', '6bec81c6', 1634912880810, 1611327960000,  '2021/01/22 10:06:00', '340.83099','341.38000','341.38000','2198','340.83099');
+
+ 
 ```
 
 ## Altinity Cloud / Clickhouse / JDBC Sink Configuration
@@ -81,3 +90,4 @@ bin/pulsar-client consume "persistent://public/default/stocks" -s stonks-reader
 * https://github.com/tspannhw/SmartStocks
 * https://github.com/tspannhw/FLiP-SQL/
 * https://docs.altinity.com/altinitycloud/quickstartguide/yourfirstqueries/
+* https://clickhouse.com/docs/en/sql-reference/functions/date-time-functions/
