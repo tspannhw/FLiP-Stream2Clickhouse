@@ -12,24 +12,67 @@ OSACON 2021 - Hello Hydrate! From Stream to Clickhouse with Apache Pulsar and Fr
 * Login
 * Launch Cluster
 * Explore
+* Build table
 
 
 ```
-
+CREATE TABLE IF NOT EXISTS stocks ON CLUSTER '{cluster}'
+(
+    symbol String, 
+    uuid String,
+    ts Date,
+    dt	 String,
+   datetime String,
+   open String, 
+   close String,
+   high String,
+   volume String,
+   low String
+) ENGINE = ReplicatedMergeTree('/clickhouse/{cluster}/tables/{shard}/{database}/{table}', '{replica}')
+    PARTITION BY toYYYYMM(ts)
+    ORDER BY (symbol);
 
 ```
 
-
-## build the environment
+## Altinity Cloud / Clickhouse / JDBC Sink Configuration
 
 ```
+tenant: "public"
+namespace: "default"
+name: "jdbc-clickhouse-sink"
+topicName: "persistent://public/default/stocks"
+sinkType: "jdbc-clickhouse"
+configs:
+    userName: "myusernameisreallycool"
+    password: "mypasswordissolongyouwillnotrememberitever123"
+    jdbcUrl: "jdbc:clickhouse://streamnative.domain.altinity.cloud:8443?ssl=true"
+    tableName: "stocks"
+    
+```
 
-bin/pulsar-admin sink stop --name solr-sink-energy --namespace default --tenant public
-bin/pulsar-admin sinks delete --tenant public --namespace default --name solr-sink-energy
-bin/pulsar-admin sinks create --tenant public --namespace default --name solr-sink-energy --sink-type solr --sink-config-file conf/solr-sink-energy.yml --inputs energy
-bin/pulsar-admin sinks get --tenant public --namespace default --name solr-sink-energy
-bin/pulsar-admin sinks status --tenant public --namespace default --name solr-sink-energy
+## Build the Pulsar environment (Or Just click create topic in StreamNative Cloud)
+
+```
+bin/pulsar-admin schemas delete stocks
+bin/pulsar-admin schemas delete persistent://public/default/stocks
+bin/pulsar-admin topics list public/default
+bin/pulsar-admin topics create persistent://public/default/stocks
+bin/pulsar-admin schemas get stocks
+bin/pulsar-admin sinks create --archive ./connectors/pulsar-io-jdbc-clickhouse-2.8.0.nar --inputs stocks --name stocks-postgres-jdbc-sink --sink-config-file conf/pgsql.yml --parallelism 1
+bin/pulsar-admin sinks list --tenant public --namespace default
+bin/pulsar-admin sinks get --tenant public --namespace default --name stocks-postgres-jdbc-sink 
+bin/pulsar-admin sinks status --tenant public --namespace default --name stocks-postgres-jdbc-sink 
+bin/pulsar-admin topics info-internal persistent://public/default/stocks
+bin/pulsar-admin topics stats-internal persistent://public/default/stocks
+bin/pulsar-admin schemas get persistent://public/default/stocks
 
 bin/pulsar-client consume "persistent://public/default/stocks" -s stonks-reader
 
 ```
+
+
+## References
+
+* https://github.com/tspannhw/SmartStocks
+* https://github.com/tspannhw/FLiP-SQL/
+* https://docs.altinity.com/altinitycloud/quickstartguide/yourfirstqueries/
