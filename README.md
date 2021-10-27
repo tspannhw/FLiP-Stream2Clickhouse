@@ -25,14 +25,14 @@ CREATE TABLE IF NOT EXISTS stocks_local ON CLUSTER '{cluster}'
     uuid String,
     ts Int32,
     dt Int32,
-   datetime String,
-   open String, 
-   close String,
-   high String,
-   volume String,
-   low String
+    datetime String,
+    open String, 
+    close String,
+    high String,
+    volume String,
+    low String
 ) ENGINE = ReplicatedMergeTree('/clickhouse/{cluster}/tables/{shard}/{database}/{table}', '{replica}')
-    PARTITION BY toYYYYMM(parseDateTimeBestEffort(datetime))
+    PARTITION BY toYYYYMMDDhhmmss(parseDateTimeBestEffort(datetime))
     ORDER BY (symbol);
     
 CREATE TABLE stocks ON CLUSTER '{cluster}' AS stocks_local
