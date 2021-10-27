@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS stocks_local ON CLUSTER '{cluster}'
     high String,
     volume String,
     low String
-) ENGINE = ReplicatedMergeTree('/clickhouse/{cluster}/tables/{shard}/{database}/{table}', '{replica}')
+) ENGINE = MergeTree('/clickhouse/{cluster}/tables/{shard}/{database}/{table}', '{replica}')
     PARTITION BY toYYYYMMDDhhmmss(parseDateTimeBestEffort(datetime))
     ORDER BY (symbol);
     
@@ -39,6 +39,26 @@ CREATE TABLE stocks ON CLUSTER '{cluster}' AS stocks_local
 ENGINE = Distributed('{cluster}', default, stocks_local, rand());
 
 INSERT INTO stocks VALUES('IBM', '6bec81c6', 1634912880810, 1611327960000,  '2021/01/22 10:06:00', '340.83099','341.38000','341.38000','2198','340.83099');
+
+
+CREATE TABLE IF NOT EXISTS stocks_local ON CLUSTER '{cluster}'
+(
+    symbol String, 
+    uuid String,
+    ts Int32,
+    dt Int32,
+    datetime String,
+    open String, 
+    close String,
+    high String,
+    volume String,
+    low String
+) ENGINE = MergeTree()
+  PARTITION BY symbol
+  ORDER BY (symbol);
+  
+CREATE TABLE stocks ON CLUSTER '{cluster}' AS stocks_local
+ENGINE = Distributed('{cluster}', default, stocks_local, rand());
 
  
 ```
