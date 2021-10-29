@@ -91,7 +91,7 @@ sinkType: "jdbc-clickhouse"
 configs:
     userName: "myusernameisreallycool"
     password: "mypasswordissolongyouwillnotrememberitever123"
-    jdbcUrl: "jdbc:clickhouse://streamnative.domain.altinity.cloud:8443?ssl=true"
+    jdbcUrl: "jdbc:clickhouse://streamdomaininthe.cloud:8443?ssl=true"
     tableName: "stocks_local"
     
     
@@ -101,9 +101,9 @@ name: "jdbc-clickhouse-sink-iot"
 topicName: "persistent://public/default/iotjetsonjson"
 sinkType: "jdbc-clickhouse"
 configs:
-    userName: "admin"
-    password: "supersecret1"
-    jdbcUrl: "jdbc:clickhouse://streamnative.osacon2021.altinity.cloud:8443/default?ssl=true"
+    userName: "youradminname"
+    password: "somepasswordthatiscool"
+    jdbcUrl: "jdbc:clickhouse://mydomainiscool.cloud:8443/default?ssl=true"
     tableName: "iotjetsonjson_local"
 
 ```
