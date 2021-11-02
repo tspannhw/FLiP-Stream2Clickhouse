@@ -87,6 +87,12 @@ select uuid, top1pct, top1, gputempf, cputempf
 from iotjetsonjson
 where toFloat32OrZero(top1pct) > 40
 order by toFloat32OrZero(top1pct) desc, systemtime desc
+
+
+select uuid, systemtime, networktime, te, top1pct, top1, cputempf, gputempf, cpu, diskusage, memory,filename
+from iotjetsonjson 
+order by systemtime desc
+
 ```
 
 ## Altinity Cloud / Clickhouse / JDBC Sink Configuration
