@@ -80,6 +80,15 @@ ENGINE = Distributed('{cluster}', default, iotjetsonjson_local, rand());
 
 ```
 
+## Queries
+
+```
+select uuid, top1pct, top1, gputempf, cputempf
+from iotjetsonjson
+where toFloat32OrZero(top1pct) > 40
+order by toFloat32OrZero(top1pct) desc, systemtime desc
+```
+
 ## Altinity Cloud / Clickhouse / JDBC Sink Configuration
 
 ```
